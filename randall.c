@@ -204,3 +204,6 @@ main (int argc, char **argv)
   finalize ();
   return !!output_errno;
 }
+
+check: randall
+  	@./randall 100 | wc -c | grep -q '^100$$' && echo "Test passed: 100 bytes generated." || echo "Test failed: Output does not contain 100 bytes."
