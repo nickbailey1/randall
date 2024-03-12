@@ -4,9 +4,9 @@ enum Output { STDIO, N } // enumerate options regarding output
 struct options {
     bool is_valid; // true if all options are valid, false if not
     long long num_input_bytes;
-    enum Input input;
+    enum Input input_opts;
     char* rand_src_filename;
-    enum Output output;
+    enum Output output_opts;
     unsigned int output_block_size;
 };
 
