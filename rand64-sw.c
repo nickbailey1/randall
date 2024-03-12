@@ -20,9 +20,9 @@ void read_file(char* filename) {
 /* Initialize the software rand64 implementation.  */
 void software_rand64_init (void)
 {
-  urandstream = fopen ("/dev/random", "r");
-  if (! urandstream)
-    abort ();
+    if (!urandstream) {
+        read_file("/dev/random");
+    }
 }
 
 /* Return a random value, using software operations.  */
