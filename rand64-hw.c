@@ -1,7 +1,6 @@
 #include <immintrin.h>
 #include <cpuid.h>
 #include <time.h>
-#include <stdio.h>
 #include <errno.h>
 
 #include "rand64-hw.h"
