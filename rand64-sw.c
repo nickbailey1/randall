@@ -8,6 +8,15 @@
 /* Input stream containing random bytes.  */
 FILE *urandstream;
 
+/* add functionality for accepting the /File option */
+void read_file(char* filename) {
+    urandstream = fopen(filename, "r");
+    if (!urandstream) {
+        fprintf(stderr, "Not a valid file.");
+        abort();
+    }
+}
+
 /* Initialize the software rand64 implementation.  */
 void software_rand64_init (void)
 {
