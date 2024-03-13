@@ -21,4 +21,5 @@ struct options
     unsigned int output_block_size;
 };
 
-void parse_option(int argc, char **argv, struct options *options);
+void
+parse_option(int argc, char **argv, struct options *options);

@@ -33,7 +33,9 @@ struct drand48_data drand_buf;
 /* Initialize the hardware rand64 implementation.  */
 void hardware_rand64_init (void)
 {
-    // seed the buffer (https://refspecs.linuxbase.org/LSB_5.0.0/LSB-Core-generic/LSB-Core-generic/baselib-mrand48-r-1.html)
+    // seed the buffer 
+    // (https://refspecs.linuxbase.org/LSB_5.0.0/LSB-Core-generic...
+    //  .../LSB-Core-generic/baselib-mrand48-r-1.html)
     srand48_r(time(NULL), &drand_buf);
 }
 
@@ -46,7 +48,8 @@ unsigned long long hardware_rand64 ()
     return x;
 }
 
-/* uses mrand48_r as okayed by TAs on Piazza. Achieves 64 bits by creating 2 32-bits and shifting */
+/* uses mrand48_r as okayed by TAs on Piazza.
+ Achieves 64 bits by creating 2 32-bits and shifting */
 unsigned long long hardware_lrand48 ()
 {
     long int upper32;

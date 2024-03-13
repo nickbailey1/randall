@@ -1,4 +1,5 @@
-#include <stdbool.h> // so we can use "true" and "false" for booleans instead of 1 and 0.
+#include <stdbool.h> /*
+so we can use "true" and "false" for booleans instead of 1 and 0. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -46,7 +47,8 @@ void parse_option(int argc, char **argv, struct options* options) {
                 break;
             /* catch error for no operand */
             case ':':
-                fprintf(stderr, "Options requiring an operand were not supplied with one.");
+                fprintf(stderr, 
+                "Options requiring an operand were not supplied with one.");
                 return;
             /* catch unsupported options */
             case '?':
