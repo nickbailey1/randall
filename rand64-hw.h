@@ -1,5 +1,3 @@
-/* this header file defines the functions implemented in rand64-hw.c */
-
 _Bool rdrand_supported(void);
 
 void hardware_rand64_init(void);
