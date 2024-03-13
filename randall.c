@@ -22,20 +22,22 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-#include <cpuid.h>
 #include <errno.h>
-#include <immintrin.h>
-#include <limits.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
+#include "./output.h"
+#include "./rand64-sw.h"
+#include "./rand64-hw.h"
+#include "./options.h"
 
 /* Main program, which outputs N bytes of random data.  */
-int
-main (int argc, char **argv)
+int main (int argc, char **argv)
 {
-  /* Check arguments.  */
+  /*
+  // Check arguments.
   bool valid = false;
   long long nbytes;
   if (argc == 2)
@@ -54,12 +56,12 @@ main (int argc, char **argv)
       return 1;
     }
 
-  /* If there's no work to do, don't worry about which library to use.  */
+  // If there's no work to do, don't worry about which library to use. 
   if (nbytes == 0)
     return 0;
 
-  /* Now that we know we have work to do, arrange to use the
-     appropriate library.  */
+  // Now that we know we have work to do, arrange to use the
+   //  appropriate library. 
   void (*initialize) (void);
   unsigned long long (*rand64) (void);
   void (*finalize) (void);
@@ -104,4 +106,5 @@ main (int argc, char **argv)
 
   finalize ();
   return !!output_errno;
+  */
 }
