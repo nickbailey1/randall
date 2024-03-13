@@ -34,61 +34,71 @@
 #include "./options.h"
 
 /* Main program, which outputs N bytes of random data.  */
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
   struct options options;
   parse_option(argc, argv, &options);
 
   // first check that options are valid
-  if (!options.valid) {
-    fprintf(stderr, "Invalid options statement.")
+  if (!options.is_valid)
+  {
+    fprintf(stderr, "Invalid options statement.");
     return 1;
   }
-  long long num_output_bytes = options.num_output_bytes;
-  
+  long long num_output_bytes = options.num_input_bytes;
+
   /* set up function pointers that can be either the hardware/software functions */
-  void (*initialize) (void);
-  unsigned long long (*rand64) ();
-  void (*finalize) (void);
+  void (*initialize)(void);
+  unsigned long long (*rand64)();
+  void (*finalize)(void);
 
   /* look at options and decide how to operate */
-  if (options.input == NONE) {
+  if (options.input_opts == NONE)
+  {
     /* spec says to use RDRAND as the default and fail if hardware rand is not available */
-    if (rdrand_supported()) {
+    if (rdrand_supported())
+    {
       initialize = hardware_rand64_init;
       rand64 = hardware_rand64;
       finalize = hardware_rand64_fini;
     }
-    else {
+    else
+    {
       fprintf(stderr, "No option supplied for input -> rdrand is default -> rdrand not supported.");
       return 1;
     }
   }
-  else if (options.input == RDRAND) {
+  else if (options.input_opts == RDRAND)
+  {
     /* same code but different error */
-    if (rdrand_supported()) {
+    if (rdrand_supported())
+    {
       initialize = hardware_rand64_init;
       rand64 = hardware_rand64;
       finalize = hardware_rand64_fini;
     }
-    else {
+    else
+    {
       fprintf(stderr, "rdrand not supported.");
       return 1;
     }
   }
-  else if (options.input == LRAND48_R) {
+  else if (options.input_opts == LRAND48_R)
+  {
     initialize = hardware_rand64_init;
     rand64 = hardware_lrand48;
     finalize = hardware_rand64_fini;
   }
-  else if (options.input == FILE) {
+  else if (options.input_opts == FILE)
+  {
     read_file(options.rand_src_filename);
     initialize = software_rand64_init;
     rand64 = software_rand64;
     finalize = software_rand64_fini;
   }
-  else {
-    fprintf(stderr, "Input not detected as invalid, but could not determine randomness function.");
+  else
+  {
+    fprintf(stderr, "Input detected as valid, but could not determine randomness function.");
     return 1;
   }
 
@@ -96,28 +106,65 @@ int main (int argc, char **argv)
   int output_word_size = sizeof rand64();
   int output_errno = 0;
 
-  if (options.output == STDOUT) {
-    do {
+  if (options.output_opts == STDIO)
+  {
+    do
+    {
       unsigned long long computed_rand = rand64();
       int output_bytes;
-      if (num_output_bytes < output_word_size) {
+      if (num_output_bytes < output_word_size)
+      {
         output_bytes = num_output_bytes;
       }
-      else {
+      else
+      {
         output_bytes = output_word_size;
       }
-      if (!writebytes(computed_rand, output_bytes)) {
+      if (!writebytes(computed_rand, output_bytes))
+      {
         output_errno = errno;
         break;
       }
       num_output_bytes -= output_bytes;
-    }
-    while (0 < num_output_bytes);
+    } while (0 < num_output_bytes);
 
-    if (fclose(stdout) != 0) {
-      
+    if (fclose(stdout) != 0)
+    {
+      output_errno = errno;
+    }
+    if (output_errno)
+    {
+      errno = output_errno;
+      perror("output");
     }
   }
+  else if (options.output_opts == N)
+  {
+    unsigned int block_bytes = options.output_block_size * 1000;
+    char *buffer = malloc(block_bytes);
+
+    do
+    {
+      int output_bytes = num_output_bytes < block_bytes ? num_output_bytes : block_bytes;
+      unsigned long long computed_rand;
+      for (int i = 0; i < output_bytes; i += sizeof(computed_rand))
+      {
+        computed_rand = rand64();
+        for (size_t j = 0; j < sizeof(computed_rand); j++)
+        {
+          unsigned char byte = *((unsigned char *)&computed_rand + j);
+          buffer[i + j] = byte;
+        }
+      }
+      write(1, buffer, output_bytes);
+      num_output_bytes -= output_bytes;
+    } while (0 < num_output_bytes);
+
+    /* don't leak memory */
+    free(buffer);
+  }
+  finalize();
+  return !!output_errno;
   /*
   // Check arguments.
   bool valid = false;
@@ -128,9 +175,9 @@ int main (int argc, char **argv)
       errno = 0;
       nbytes = strtoll (argv[1], &endptr, 10);
       if (errno)
-	perror (argv[1]);
+  perror (argv[1]);
       else
-	valid = !*endptr && 0 <= nbytes;
+  valid = !*endptr && 0 <= nbytes;
     }
   if (!valid)
     {
@@ -138,12 +185,12 @@ int main (int argc, char **argv)
       return 1;
     }
 
-  // If there's no work to do, don't worry about which library to use. 
+  // If there's no work to do, don't worry about which library to use.
   if (nbytes == 0)
     return 0;
 
   // Now that we know we have work to do, arrange to use the
-   //  appropriate library. 
+   //  appropriate library.
   void (*initialize) (void);
   unsigned long long (*rand64) (void);
   void (*finalize) (void);
@@ -169,10 +216,10 @@ int main (int argc, char **argv)
       unsigned long long x = rand64 ();
       int outbytes = nbytes < wordsize ? nbytes : wordsize;
       if (!writebytes (x, outbytes))
-	{
-	  output_errno = errno;
-	  break;
-	}
+  {
+    output_errno = errno;
+    break;
+  }
       nbytes -= outbytes;
     }
   while (0 < nbytes);
