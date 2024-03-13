@@ -19,3 +19,8 @@ time ./randall 133562368 >rand.data
     real    3.362s
     user    3.121s
     sys     0.175s
+
+time ./randall -i /dev/urandom >/dev/null
+    real    1.895s
+    user    0.842s
+    sys     0.985s

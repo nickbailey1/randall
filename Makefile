@@ -25,8 +25,8 @@ CFLAGS = $(OPTIMIZE) -g3 -Wall -Wextra -fanalyzer \
 
 # The archiver command, its options and filename extension.
 TAR = tar
-TARFLAGS = --xz --transform 's,^,randall/,'
-TAREXT = txz
+TARFLAGS = --gzip --transform 's,^,randall/,'
+TAREXT = tgz
 
 default: randall
 
@@ -38,7 +38,7 @@ assignment-files = COPYING Makefile randall.c
 randall-assignment.$(TAREXT): $(assignment-files)
 	$(TAR) $(TARFLAGS) -cf $@ $(assignment-files)
 
-submission: randall-submission.$(TAREXT)
+submission-tarball: randall-submission.$(TAREXT)
 submission-files = $(assignment-files) \
   notes.txt options.c options.h output.c output.h \
   rand64-hw.c rand64-hw.h rand64-sw.c rand64-sw.h \
@@ -46,7 +46,10 @@ submission-files = $(assignment-files) \
 randall-submission.$(TAREXT): $(submission-files)
 	$(TAR) $(TARFLAGS) -cf $@ $(submission-files)
 
-.PHONY: default clean assignment submission
+repository-tarball:
+	$(TAR) -czf randall-git.tgz .git
+
+.PHONY: default clean assignment submission-tarball repository-tarball
 
 clean:
 	rm -f *.o *.$(TAREXT) randall
