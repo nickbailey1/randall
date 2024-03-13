@@ -31,7 +31,7 @@ void parse_option(int argc, char **argv, struct options* options) {
                 options->is_valid = true;
                 break;
             case 'o':
-                if (strcmp("stdout", optarg) == 0) {
+                if (strcmp("stdio", optarg) == 0) {
                     options->output_opts = STDIO;
                 }
                 else {
