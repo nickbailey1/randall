@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 # Optimization level.  Change this -O2 to -Og or -O0 or whatever.
-OPTIMIZE =
+OPTIMIZE = -Og
 
 # The C compiler and its options.
 CC = gcc
@@ -25,32 +25,32 @@ CFLAGS = $(OPTIMIZE) -g3 -Wall -Wextra -fanalyzer \
 
 # The archiver command, its options and filename extension.
 TAR = tar
-TARFLAGS = --gzip --transform 's,^,randall/,'
-TAREXT = tgz
+TARFLAGS = --xz --transform 's,^,randall/,'
+TAREXT = txz
 
 default: randall
 
-randall: randall.c
-	$(CC) $(CFLAGS) $@.c -o $@
+randall: *.c
+	$(CC) $(CFLAGS) *.c -o $@
 
 assignment: randall-assignment.$(TAREXT)
 assignment-files = COPYING Makefile randall.c
 randall-assignment.$(TAREXT): $(assignment-files)
 	$(TAR) $(TARFLAGS) -cf $@ $(assignment-files)
 
-submission-tarball: randall-submission.$(TAREXT)
+submission: randall-submission.$(TAREXT)
 submission-files = $(assignment-files) \
-  notes.txt # More files should be listed here, as needed.
+  notes.txt options.c options.h output.c output.h \
+  rand64-hw.c rand64-hw.h rand64-sw.c rand64-sw.h \
+  test.sh
 randall-submission.$(TAREXT): $(submission-files)
 	$(TAR) $(TARFLAGS) -cf $@ $(submission-files)
 
-repository-tarball:
-	$(TAR) -czf randall-git.tgz .git
-
-.PHONY: default clean assignment submission-tarball repository-tarball
+.PHONY: default clean assignment submission
 
 clean:
 	rm -f *.o *.$(TAREXT) randall
 
-check: randall
-	@./randall 100 | wc -c | grep -q '^100$$' && echo "Test passed: 100 bytes generated." || echo "Test failed: Output does not contain 100 bytes."
+check: randall test.sh
+	chmod 755 test.sh
+	./test.sh

@@ -22,7 +22,7 @@ void parse_option(int argc, char **argv, struct options* options) {
                     options->input_opts = LRAND48_R;
                 }
                 else if (optarg[0] == '/') {
-                    options->input_opts = FILE;
+                    options->input_opts = FILE_INPUT;
                     options->rand_src_filename = optarg;
                 }
                 else {
@@ -32,13 +32,13 @@ void parse_option(int argc, char **argv, struct options* options) {
                 break;
             case 'o':
                 if (strcmp("stdout", optarg) == 0) {
-                    options->output_opts = STDOUT;
+                    options->output_opts = STDIO;
                 }
                 else {
                     options->output_opts = N;
                     options->output_block_size = atoi(optarg);
                     if (options->output_block_size == 0) {
-                        fprint(stderr, "0 is not a valid output block size");
+                        fprintf(stderr, "0 is not a valid output block size");
                         return;
                     }
                 }
@@ -50,7 +50,7 @@ void parse_option(int argc, char **argv, struct options* options) {
                 return;
             /* catch unsupported options */
             case '?':
-                fprintf(stderr "Unsupported options.");
+                fprintf(stderr, "Unsupported options.");
                 return;
         }
     }

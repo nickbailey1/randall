@@ -89,7 +89,7 @@ int main(int argc, char **argv)
     rand64 = hardware_lrand48;
     finalize = hardware_rand64_fini;
   }
-  else if (options.input_opts == FILE)
+  else if (options.input_opts == FILE_INPUT)
   {
     read_file(options.rand_src_filename);
     initialize = software_rand64_init;
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
       {
         output_bytes = output_word_size;
       }
-      if (!writebytes(computed_rand, output_bytes))
+      if (!print_output_bytes(computed_rand, output_bytes))
       {
         output_errno = errno;
         break;

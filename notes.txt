@@ -1,1 +1,21 @@
 NOTES!!!
+
+time dd if=/dev/urandom ibs=8192 obs=8192 count=16384 >/dev/null
+    real    1.094s
+    user    0.097s
+    sys     0.990s
+
+time ./randall 133562368 >/dev/null
+    real    3.322s
+    user    3.235s
+    sys     0.030s
+
+time ./randall 133562368 | cat >/dev/null
+    real    3.300s
+    user    3.158s
+    sys     0.300s
+
+time ./randall 133562368 >rand.data
+    real    3.362s
+    user    3.121s
+    sys     0.175s

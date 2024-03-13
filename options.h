@@ -3,7 +3,7 @@ enum Input
     NONE,
     RDRAND,
     LRAND48_R,
-    FILE
+    FILE_INPUT
 }; // enumerate options regarding input
 enum Output
 {
